@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Приглашение в Dota 2 | Для дяди Леона</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0a0e14;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Анимированный фон */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #1a1e2e 0%, #0a0e14 70%);
+            z-index: -1;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 100, 50, 0.3);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            25% {
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0.3;
+            }
+            75% {
+                opacity: 0.6;
+            }
+        }
+
+        .main-container {
+            max-width: 800px;
+            width: 90%;
+            margin: 20px;
+            position: relative;
+        }
+
+        /* Карточка приглашения */
+        .invitation-card {
+            background: linear-gradient(135deg, #1c1f2e 0%, #151821 100%);
+            border: 2px solid #d4a240;
+            border-radius: 20px;
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            box-shadow: 
+                0 0 30px rgba(212, 162, 64, 0.3),
+                0 0 60px rgba(212, 162, 64, 0.1),
+                inset 0 0 30px rgba(212, 162, 64, 0.05);
+            animation: cardGlow 3s infinite alternate;
+        }
+
+        @keyframes cardGlow {
+            from {
+                box-shadow: 
+                    0 0 30px rgba(212, 162, 64, 0.3),
+                    0 0 60px rgba(212, 162, 64, 0.1);
+            }
+            to {
+                box-shadow: 
+                    0 0 50px rgba(212, 162, 64, 0.5),
+                    0 0 100px rgba(212, 162, 64, 0.2),
+                    0 0 150px rgba(255, 100, 50, 0.1);
+            }
+        }
+
+        /* Декоративные элементы по углам */
+        .corner-decor {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-color: #d4a240;
+            border-style: solid;
+        }
+
+        .top-left {
+            top: -2px;
+            left: -2px;
+            border-width: 3px 0 0 3px;
+            border-radius: 10px 0 0 0;
+        }
+
+        .top-right {
+            top: -2px;
+            right: -2px;
+            border-width: 3px 3px 0 0;
+            border-radius: 0 10px 0 0;
+        }
+
+        .bottom-left {
+            bottom: -2px;
+            left: -2px;
+            border-width: 0 0 3px 3px;
+            border-radius: 0 0 0 10px;
+        }
+
+        .bottom-right {
+            bottom: -2px;
+            right: -2px;
+            border-width: 0 3px 3px 0;
+            border-radius: 0 0 10px 0;
+        }
+
+        /* Логотип Dota 2 */
+        .dota-logo {
+            font-size: 60px;
+            font-weight: bold;
+            color: #d4a240;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(212, 162, 64, 0.5);
+            position: relative;
+            display: inline-block;
+        }
+
+        .dota-logo::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #d4a240, transparent);
+        }
+
+        /* Иконка Dota */
+        .dota-icon {
+            font-size: 80px;
+            margin: 20px 0;
+            animation: bounce 2s infinite;
+            filter: drop-shadow(0 0 20px rgba(212, 162, 64, 0.6));
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Приветственный текст */
+        .greeting {
+            font-size: 18px;
+            color: #8892a4;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .name {
+            font-size: 48px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #d4a240, #f0c27a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+        }
+
+        .subtitle {
+            font-size: 24px;
+            color: #d4a240;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        /* Информация об игре */
+        .game-info {
+            background: rgba(10, 14, 20, 0.6);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 1px solid rgba(212, 162, 64, 0.3);
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+            color: #c0c8d4;
+            font-size: 18px;
+        }
+
+        .info-icon {
+            font-size: 24px;
+            min-width: 30px;
+        }
+
+        .info-value {
+            color: #f0c27a;
+            font-weight: bold;
+        }
+
+        /* Кнопка */
+        .play-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #d4a240, #b8892e);
+            color: #0a0e14;
+            font-size: 22px;
+            font-weight: bold;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 162, 64, 0.5);
+            background: linear-gradient(135deg, #e6b350, #d4a240);
+        }
+
+        .play-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s;
+        }
+
+        .play-button:active::before {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Нижний текст */
+        .footer-text {
+            color: #5a6270;
+            font-size: 14px;
+            margin-top: 25px;
+            letter-spacing: 1px;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .invitation-card {
+                padding: 30px 20px;
+            }
+            
+            .name {
+                font-size: 36px;
+            }
+            
+            .subtitle {
+                font-size: 18px;
+            }
+            
+            .play-button {
+                font-size: 18px;
+                padding: 15px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Анимированный фон -->
+    <div class="background"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- Основной контейнер -->
+    <div class="main-container">
+        <div class="invitation-card">
+            <!-- Декоративные уголки -->
+            <div class="corner-decor top-left"></div>
+            <div class="corner-decor top-right"></div>
+            <div class="corner-decor bottom-left"></div>
+            <div class="corner-decor bottom-right"></div>
+
+            <!-- Логотип -->
+            <div class="dota-logo">DOTA 2</div>
+            <div class="dota-icon">⚔️</div>
+
+            <!-- Приветствие -->
+            <div class="greeting">ПРИГЛАШЕНИЕ В ИГРУ</div>
+            <div class="name">Дядя Леон</div>
+            <div class="subtitle">Готов к битве?</div>
+
+            <!-- Информация об игре -->
+            <div class="game-info">
+                <div class="info-row">
+                    <span class="info-icon">🎮</span>
+                    <span>Игра: <span class="info-value">Dota 2</span></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-icon">👥</span>
+                    <span>Режим: <span class="info-value">Совместная игра</span></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-icon">🎯</span>
+                    <span>Цель: <span class="info-value">Победить и повеселиться</span></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-icon">⏰</span>
+                    <span>Когда: <span class="info-value">Сегодня вечером</span></span>
+                </div>
+            </div>
+
+            <!-- Кнопка действия -->
+            <a href="steam://run/570" class="play-button">
+                ⚡ Присоединиться к игре
+            </a>
+
+            <!-- Дополнительная информация -->
+            <div class="footer-text">
+                Жду тебя в команде, дядя Леон! 🏆
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Создание партиклов для фона
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 4 + 2;
+                const startX = Math.random() * 100;
+                const delay = Math.random() * 6;
+                const duration = Math.random() * 4 + 4;
+                
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = startX + '%';
+                particle.style.bottom = -(Math.random() * 50 + 10) + 'px';
+                particle.style.animationDelay = delay + 's';
+                particle.style.animationDuration = duration + 's';
+                
+                container.appendChild(particle);
+            }
+        }
+
+        // Эффект при загрузке страницы
+        window.addEventListener('load', () => {
+            createParticles();
+            
+            // Анимация появления карточки
+            const card = document.querySelector('.invitation-card');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.8s ease';
+            
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        });
+
+        // Обработчик клика по кнопке
+        document.querySelector('.play-button').addEventListener('click', function(e) {
+            // Если Steam не установлен, показываем сообщение
+            setTimeout(() => {
+                const confirmed = confirm('Если игра не запустилась, убедитесь что Steam запущен.\n\nХотите открыть Dota 2 в Steam?');
+                if (confirmed) {
+                    window.open('https://store.steampowered.com/app/570/Dota_2/', '_blank');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 
