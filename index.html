@@ -229,32 +229,100 @@
             font-weight: bold;
         }
 
-        .play-button {
+        /* Стили для выбора времени */
+        .time-picker-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(10, 14, 20, 0.4);
+            border-radius: 15px;
+            border: 1px dashed rgba(212, 162, 64, 0.5);
+        }
+
+        .time-label {
+            color: #c0c8d4;
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: block;
+            letter-spacing: 1px;
+        }
+
+        .datetime-input {
+            background: #0a0e14;
+            border: 2px solid #d4a240;
+            color: #f0c27a;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .datetime-input:focus {
+            border-color: #f0c27a;
+            box-shadow: 0 0 20px rgba(212, 162, 64, 0.4);
+        }
+
+        .datetime-input::-webkit-calendar-picker-indicator {
+            filter: invert(0.7) sepia(1) saturate(5) hue-rotate(10deg);
+            cursor: pointer;
+        }
+
+        /* Кнопки */
+        .buttons-row {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .play-button, .confirm-button {
             display: inline-block;
-            background: linear-gradient(135deg, #d4a240, #b8892e);
-            color: #0a0e14;
             font-size: 22px;
             font-weight: bold;
-            padding: 18px 50px;
+            padding: 18px 40px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 2px;
             transition: all 0.3s ease;
-            margin-top: 20px;
             text-decoration: none;
             position: relative;
             overflow: hidden;
         }
 
-        .play-button:hover {
+        .confirm-button {
+            background: linear-gradient(135deg, #d4a240, #b8892e);
+            color: #0a0e14;
+            font-size: 18px;
+            padding: 15px 35px;
+        }
+
+        .confirm-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 15px 40px rgba(212, 162, 64, 0.5);
             background: linear-gradient(135deg, #e6b350, #d4a240);
         }
 
-        .play-button::before {
+        .play-button {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #fff;
+            font-size: 18px;
+            padding: 15px 35px;
+        }
+
+        .play-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(46, 204, 113, 0.5);
+            background: linear-gradient(135deg, #3ddb84, #2ecc71);
+        }
+
+        .play-button::before, .confirm-button::before {
             content: '';
             position: absolute;
             top: 50%;
@@ -267,8 +335,58 @@
             transition: transform 0.5s;
         }
 
-        .play-button:active::before {
+        .play-button:active::before, .confirm-button:active::before {
             transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Сообщение после подтверждения */
+        .confirmation-message {
+            display: none;
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(39, 174, 96, 0.1));
+            border: 1px solid #2ecc71;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 25px;
+            color: #2ecc71;
+            font-size: 18px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .heart {
+            font-size: 60px;
+            display: block;
+            margin-top: 20px;
+            animation: heartbeat 1.5s infinite;
+            cursor: default;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            15% {
+                transform: scale(1.3);
+            }
+            30% {
+                transform: scale(1);
+            }
+            45% {
+                transform: scale(1.2);
+            }
+            60% {
+                transform: scale(1);
+            }
         }
 
         .footer-text {
@@ -276,6 +394,12 @@
             font-size: 14px;
             margin-top: 25px;
             letter-spacing: 1px;
+        }
+
+        .selected-time {
+            color: #f0c27a;
+            font-weight: bold;
+            font-size: 20px;
         }
 
         @media (max-width: 600px) {
@@ -291,9 +415,14 @@
                 font-size: 18px;
             }
             
-            .play-button {
-                font-size: 18px;
-                padding: 15px 40px;
+            .play-button, .confirm-button {
+                font-size: 16px;
+                padding: 12px 30px;
+            }
+
+            .datetime-input {
+                font-size: 16px;
+                padding: 10px 15px;
             }
         }
     </style>
@@ -329,15 +458,31 @@
                     <span class="info-icon">🎯</span>
                     <span>Цель: <span class="info-value">Победить и повеселиться</span></span>
                 </div>
-                <div class="info-row">
-                    <span class="info-icon">⏰</span>
-                    <span>Когда: <span class="info-value">Сегодня вечером</span></span>
-                </div>
             </div>
 
-            <a href="steam://run/570" class="play-button">
-                ⚡ Присоединиться к игре
-            </a>
+            <!-- Выбор времени -->
+            <div class="time-picker-section">
+                <label class="time-label">🕐 Выбери удобное время для игры:</label>
+                <input type="datetime-local" id="gameTime" class="datetime-input">
+            </div>
+
+            <!-- Кнопки -->
+            <div class="buttons-row">
+                <button onclick="confirmTime()" class="confirm-button">
+                    ✅ Подтвердить время
+                </button>
+                <a href="steam://run/570" class="play-button">
+                    ⚡ Войти в игру
+                </a>
+            </div>
+
+            <!-- Сообщение о подтверждении -->
+            <div id="confirmationMessage" class="confirmation-message">
+                🎮 Отлично! Жду тебя <span id="selectedTimeDisplay" class="selected-time"></span>
+            </div>
+
+            <!-- Сердечко -->
+            <div class="heart" title="С любовью для дяди Леона!">❤️</div>
 
             <div class="footer-text">
                 Жду тебя в команде, дядя Леон! 🏆
@@ -370,9 +515,56 @@
             }
         }
 
+        function confirmTime() {
+            const timeInput = document.getElementById('gameTime');
+            const confirmationDiv = document.getElementById('confirmationMessage');
+            const timeDisplay = document.getElementById('selectedTimeDisplay');
+            
+            if (!timeInput.value) {
+                alert('Пожалуйста, выбери дату и время! 🕐');
+                return;
+            }
+            
+            const selectedDate = new Date(timeInput.value);
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            };
+            const formattedDate = selectedDate.toLocaleDateString('ru-RU', options);
+            
+            timeDisplay.textContent = formattedDate;
+            confirmationDiv.style.display = 'block';
+            
+            // Прокрутка до сообщения
+            confirmationDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Анимация сердечка
+            const heart = document.querySelector('.heart');
+            heart.style.animation = 'none';
+            heart.offsetHeight;
+            heart.style.animation = 'heartbeat 0.6s 3';
+            setTimeout(() => {
+                heart.style.animation = 'heartbeat 1.5s infinite';
+            }, 1800);
+            
+            // Можно сохранить время или отправить куда-то
+            console.log('Дядя Леон выбрал время:', formattedDate);
+        }
+
+        // Установка минимальной даты (сегодня)
         window.addEventListener('load', () => {
             createParticles();
             
+            const timeInput = document.getElementById('gameTime');
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            timeInput.min = now.toISOString().slice(0, 16);
+            
+            // Анимация появления карточки
             const card = document.querySelector('.invitation-card');
             card.style.opacity = '0';
             card.style.transform = 'translateY(30px)';
@@ -384,6 +576,7 @@
             }, 100);
         });
 
+        // Обработчик для кнопки Steam
         document.querySelector('.play-button').addEventListener('click', function(e) {
             setTimeout(() => {
                 const confirmed = confirm('Если игра не запустилась, убедитесь что Steam запущен.\n\nХотите открыть Dota 2 в Steam?');
