@@ -21,7 +21,6 @@
             overflow-x: hidden;
         }
 
-        /* Анимированный фон */
         .background {
             position: fixed;
             top: 0;
@@ -73,7 +72,6 @@
             position: relative;
         }
 
-        /* Карточка приглашения */
         .invitation-card {
             background: linear-gradient(135deg, #1c1f2e 0%, #151821 100%);
             border: 2px solid #d4a240;
@@ -102,7 +100,6 @@
             }
         }
 
-        /* Декоративные элементы по углам */
         .corner-decor {
             position: absolute;
             width: 50px;
@@ -139,7 +136,6 @@
             border-radius: 0 0 10px 0;
         }
 
-        /* Логотип Dota 2 */
         .dota-logo {
             font-size: 60px;
             font-weight: bold;
@@ -163,7 +159,6 @@
             background: linear-gradient(90deg, transparent, #d4a240, transparent);
         }
 
-        /* Иконка Dota */
         .dota-icon {
             font-size: 80px;
             margin: 20px 0;
@@ -180,7 +175,6 @@
             }
         }
 
-        /* Приветственный текст */
         .greeting {
             font-size: 18px;
             color: #8892a4;
@@ -207,7 +201,6 @@
             font-style: italic;
         }
 
-        /* Информация об игре */
         .game-info {
             background: rgba(10, 14, 20, 0.6);
             border-radius: 15px;
@@ -236,7 +229,6 @@
             font-weight: bold;
         }
 
-        /* Кнопка */
         .play-button {
             display: inline-block;
             background: linear-gradient(135deg, #d4a240, #b8892e);
@@ -279,7 +271,6 @@
             transform: translate(-50%, -50%) scale(1);
         }
 
-        /* Нижний текст */
         .footer-text {
             color: #5a6270;
             font-size: 14px;
@@ -287,7 +278,6 @@
             letter-spacing: 1px;
         }
 
-        /* Адаптивность */
         @media (max-width: 600px) {
             .invitation-card {
                 padding: 30px 20px;
@@ -309,29 +299,23 @@
     </style>
 </head>
 <body>
-    <!-- Анимированный фон -->
     <div class="background"></div>
     <div class="particles" id="particles"></div>
 
-    <!-- Основной контейнер -->
     <div class="main-container">
         <div class="invitation-card">
-            <!-- Декоративные уголки -->
             <div class="corner-decor top-left"></div>
             <div class="corner-decor top-right"></div>
             <div class="corner-decor bottom-left"></div>
             <div class="corner-decor bottom-right"></div>
 
-            <!-- Логотип -->
             <div class="dota-logo">DOTA 2</div>
             <div class="dota-icon">⚔️</div>
 
-            <!-- Приветствие -->
             <div class="greeting">ПРИГЛАШЕНИЕ В ИГРУ</div>
             <div class="name">Дядя Леон</div>
             <div class="subtitle">Готов к битве?</div>
 
-            <!-- Информация об игре -->
             <div class="game-info">
                 <div class="info-row">
                     <span class="info-icon">🎮</span>
@@ -351,12 +335,10 @@
                 </div>
             </div>
 
-            <!-- Кнопка действия -->
             <a href="steam://run/570" class="play-button">
                 ⚡ Присоединиться к игре
             </a>
 
-            <!-- Дополнительная информация -->
             <div class="footer-text">
                 Жду тебя в команде, дядя Леон! 🏆
             </div>
@@ -364,7 +346,6 @@
     </div>
 
     <script>
-        // Создание партиклов для фона
         function createParticles() {
             const container = document.getElementById('particles');
             const particleCount = 30;
@@ -389,11 +370,9 @@
             }
         }
 
-        // Эффект при загрузке страницы
         window.addEventListener('load', () => {
             createParticles();
             
-            // Анимация появления карточки
             const card = document.querySelector('.invitation-card');
             card.style.opacity = '0';
             card.style.transform = 'translateY(30px)';
@@ -405,9 +384,7 @@
             }, 100);
         });
 
-        // Обработчик клика по кнопке
         document.querySelector('.play-button').addEventListener('click', function(e) {
-            // Если Steam не установлен, показываем сообщение
             setTimeout(() => {
                 const confirmed = confirm('Если игра не запустилась, убедитесь что Steam запущен.\n\nХотите открыть Dota 2 в Steam?');
                 if (confirmed) {
@@ -417,4 +394,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
