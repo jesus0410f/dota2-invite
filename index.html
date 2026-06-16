@@ -313,7 +313,6 @@
             form.submit();
             
             console.log('✅ Письмо отправлено на ' + MY_EMAIL);
-            console.log('📬 Проверь папку "Входящие" и "Спам"');
         });
 
         // При загрузке проверяем, не выбирал ли уже время
@@ -323,20 +322,16 @@
             
             if (savedTime && savedTimestamp) {
                 const timeDiff = Date.now() - new Date(savedTimestamp).getTime();
-                // Если прошло меньше 24 часов - показываем экран 2
                 if (timeDiff < 24 * 60 * 60 * 1000) {
                     document.getElementById('chosenTimeDisplay').textContent = `🕐 ${savedTime}`;
                     screen1.classList.add('hidden');
                     screen2.classList.add('show');
                 } else {
-                    // Очищаем старые данные
                     localStorage.removeItem('dotaTime');
                     localStorage.removeItem('dotaTimestamp');
                 }
             }
         });
-
-        console.log('📧 Уведомления уходят на: ' + MY_EMAIL);
     </script>
 </body>
 </html>
