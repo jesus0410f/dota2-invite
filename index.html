@@ -183,21 +183,6 @@
                 transform: translateY(0); 
             }
         }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 10px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
@@ -237,18 +222,29 @@
             <div class="message" id="message"></div>
             <div class="success-message" id="successMessage">
                 🎮 Отлично! Встречаемся в указанное время!<br>
-                <small>Уведомление отправлено на почту!</small>
+                <small>Проверь почту — письмо уже должно быть там!</small>
             </div>
         </div>
     </div>
 
+    <!-- Подключаем EmailJS библиотеку -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
     <script>
         // ============================================
-        // ВСТАВЬ СЮДА СВОЮ ПОЧТУ!
+        // oleg.zanedelev@gmail.com
         // ============================================
         const MY_EMAIL = 'oleg.zanedelev@gmail.com'; // ← ЗАМЕНИ ЭТО!
         
+        // Настройки EmailJS (регистрация за 2 минуты на emailjs.com)
+        const EMAILJS_SERVICE_ID = 'service_default'; // Замени на свой
+        const EMAILJS_TEMPLATE_ID = 'template_default'; // Замени на свой
+        const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY'; // Замени на свой
+        
         let selectedTime = null;
+
+        // Инициализация EmailJS
+        emailjs.init(EMAILJS_PUBLIC_KEY);
 
         // Обработчики выбора времени
         document.querySelectorAll('.time-slot').forEach(slot => {
@@ -267,195 +263,130 @@
             if (!selectedTime) return;
             
             const messageDiv = document.getElementById('message');
-            messageDiv.innerHTML = '<span class="loading-spinner"></span>Отправляю уведомление на почту...';
+            messageDiv.textContent = 'Отправляю уведомление...';
             this.disabled = true;
             
-            // Отправляем уведомление на почту
-            const sent = await sendEmailNotification(selectedTime);
+            // Пробуем отправить через EmailJS
+            let sent = await sendViaEmailJS(selectedTime);
+            
+            // Если не получилось — пробуем FormSubmit
+            if (!sent) {
+                sent = await sendViaFormSubmit(selectedTime);
+            }
             
             if (sent) {
                 messageDiv.textContent = '';
                 document.getElementById('successMessage').classList.add('show');
-                // Сохраняем в localStorage
                 localStorage.setItem('dotaTime', selectedTime);
                 localStorage.setItem('dotaTimestamp', new Date().toISOString());
             } else {
-                messageDiv.textContent = 'Не удалось отправить письмо. Проверь почту в коде!';
+                messageDiv.textContent = '❌ Не удалось отправить. Проверь настройки почты в коде или открой консоль (F12)';
                 this.disabled = false;
             }
         });
 
-        // Функция отправки email через несколько сервисов
-        async function sendEmailNotification(time) {
-            if (MY_EMAIL === 'ТВОЯ_ПОЧТА@gmail.com') {
-                alert('Эй! Ты забыл вставить свою почту в коде! Найди строчку "const MY_EMAIL" и замени на свою почту!');
+        // Способ 1: EmailJS
+        async function sendViaEmailJS(time) {
+            if (!EMAILJS_PUBLIC_KEY || EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+                console.log('⚠️ EmailJS не настроен');
                 return false;
             }
-
-            const subject = '🎮 Дядя Леон выбрал время для Доты!';
-            const message = `
-                Привет! 👋
-                
-                Дядя Леон только что выбрал время для игры в Доту:
-                
-                🕐 ${time}
-                📅 ${new Date().toLocaleDateString('ru-RU')}
-                ⏰ ${new Date().toLocaleTimeString('ru-RU')}
-                
-                Готовься к битве! ⚔️
-                
-                ---
-                Отправлено автоматически с сайта-приглашения
-            `;
-
-            // Пробуем несколько сервисов по очереди
-            let success = await tryFormSubmit(MY_EMAIL, subject, message);
-            if (success) return true;
             
-            success = await tryEmailJS(MY_EMAIL, subject, message);
-            if (success) return true;
-            
-            // Если ничего не сработало, сохраняем локально
-            saveToLocal(time, message);
-            alert('Письмо не удалось отправить автоматически, но выбор сохранён! Проверь консоль (F12) для деталей.');
-            return false;
+            try {
+                console.log('📧 Пробую отправить через EmailJS...');
+                
+                const templateParams = {
+                    to_email: MY_EMAIL,
+                    to_name: 'Племянник',
+                    from_name: 'Дядя Леон',
+                    time: time,
+                    date: new Date().toLocaleDateString('ru-RU'),
+                    message: `Дядя Леон выбрал время: ${time}`
+                };
+                
+                const response = await emailjs.send(
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_ID,
+                    templateParams
+                );
+                
+                console.log('✅ Письмо отправлено через EmailJS!', response);
+                return true;
+            } catch (error) {
+                console.error('❌ Ошибка EmailJS:', error);
+                return false;
+            }
         }
 
-        // Способ 1: FormSubmit (бесплатный, не требует регистрации)
-        async function tryFormSubmit(email, subject, message) {
+        // Способ 2: FormSubmit
+        async function sendViaFormSubmit(time) {
+            if (MY_EMAIL === 'ТВОЯ_ПОЧТА@gmail.com') {
+                console.log('⚠️ Почта не указана');
+                return false;
+            }
+            
             try {
-                console.log('Пробую отправить через FormSubmit...');
+                console.log('📧 Пробую отправить через FormSubmit...');
                 
                 const formData = new FormData();
-                formData.append('email', email);
-                formData.append('message', message);
-                formData.append('_subject', subject);
+                formData.append('email', MY_EMAIL);
+                formData.append('_subject', '🎮 Дядя Леон выбрал время для Доты!');
+                formData.append('message', 
+                    `Привет!\n\n` +
+                    `Дядя Леон выбрал время: ${time}\n` +
+                    `Дата выбора: ${new Date().toLocaleDateString('ru-RU')}\n` +
+                    `Время выбора: ${new Date().toLocaleTimeString('ru-RU')}\n\n` +
+                    `Готовься к битве! ⚔️`
+                );
                 formData.append('_captcha', 'false');
                 formData.append('_template', 'table');
                 
-                const response = await fetch('https://formsubmit.co/ajax/' + email, {
+                const response = await fetch('https://formsubmit.co/ajax/' + MY_EMAIL, {
                     method: 'POST',
                     body: formData
                 });
                 
-                if (response.ok) {
+                const result = await response.json();
+                
+                if (result.success === 'true' || result.success === true) {
                     console.log('✅ Письмо отправлено через FormSubmit!');
-                    console.log('📧 Проверь почту (и папку Спам тоже)');
+                    console.log('📬 Проверь папку "Входящие" и "Спам"');
                     return true;
+                } else {
+                    console.log('⚠️ FormSubmit ответил:', result);
+                    return false;
                 }
             } catch (error) {
-                console.log('FormSubmit не сработал:', error);
-            }
-            return false;
-        }
-
-        // Способ 2: EmailJS (нужна регистрация, но надёжнее)
-        async function tryEmailJS(email, subject, message) {
-            // Если у тебя есть аккаунт EmailJS, вставь свои ключи:
-            const EMAILJS_SERVICE_ID = ''; // Вставь свой Service ID
-            const EMAILJS_TEMPLATE_ID = ''; // Вставь свой Template ID
-            const EMAILJS_USER_ID = ''; // Вставь свой User ID
-            
-            if (!EMAILJS_SERVICE_ID) {
-                console.log('EmailJS не настроен, пропускаю...');
+                console.error('❌ Ошибка FormSubmit:', error);
                 return false;
             }
-            
-            try {
-                console.log('Пробую отправить через EmailJS...');
-                
-                const templateParams = {
-                    to_email: email,
-                    subject: subject,
-                    message: message,
-                    time: new Date().toLocaleString('ru-RU')
-                };
-                
-                const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        service_id: EMAILJS_SERVICE_ID,
-                        template_id: EMAILJS_TEMPLATE_ID,
-                        user_id: EMAILJS_USER_ID,
-                        template_params: templateParams,
-                    }),
-                });
-                
-                if (response.ok) {
-                    console.log('✅ Письмо отправлено через EmailJS!');
-                    return true;
-                }
-            } catch (error) {
-                console.log('EmailJS не сработал:', error);
-            }
-            return false;
         }
 
-        // Локальное сохранение (запасной вариант)
-        function saveToLocal(time, message) {
-            const selections = JSON.parse(localStorage.getItem('dotaSelections') || '[]');
-            selections.push({
-                time: time,
-                message: message,
-                timestamp: new Date().toISOString()
-            });
-            localStorage.setItem('dotaSelections', JSON.stringify(selections));
-            
-            console.log('💾 Выбор сохранён локально:');
-            console.log('🕐 Время:', time);
-            console.log('📋 Все выборы:', selections);
-            console.log('📧 Для просмотра открой консоль (F12)');
-        }
-
-        // Проверка предыдущих выборов при загрузке
+        // Проверка при загрузке
         window.addEventListener('load', function() {
-            // Проверяем, не выбирал ли дядя Леон время ранее
             const savedTime = localStorage.getItem('dotaTime');
             const savedTimestamp = localStorage.getItem('dotaTimestamp');
             
             if (savedTime && savedTimestamp) {
                 const timeDiff = Date.now() - new Date(savedTimestamp).getTime();
-                // Если прошло меньше 24 часов
                 if (timeDiff < 24 * 60 * 60 * 1000) {
                     document.getElementById('successMessage').classList.add('show');
                     document.getElementById('successMessage').innerHTML = 
                         `🎮 Уже выбрано: ${savedTime}<br><small>До встречи в Доте!</small>`;
                     document.getElementById('confirmBtn').disabled = true;
-                } else {
-                    // Очищаем старые данные
-                    localStorage.removeItem('dotaTime');
-                    localStorage.removeItem('dotaTimestamp');
                 }
             }
             
-            // Показываем сохранённые выборы в консоли
-            const allSelections = JSON.parse(localStorage.getItem('dotaSelections') || '[]');
-            if (allSelections.length > 0) {
-                console.log('📋 История выборов дяди Леона:');
-                allSelections.forEach((sel, i) => {
-                    console.log(`${i + 1}. ${sel.time} (${new Date(sel.timestamp).toLocaleString('ru-RU')})`);
-                });
+            // Диагностика в консоли
+            console.log('=== ДИАГНОСТИКА ===');
+            console.log('📧 Почта для уведомлений:', MY_EMAIL || 'НЕ УКАЗАНА!');
+            console.log('🔑 EmailJS ключ:', EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY' ? 'Настроен' : 'НЕ НАСТРОЕН');
+            console.log('===================');
+            
+            if (MY_EMAIL === 'ТВОЯ_ПОЧТА@gmail.com') {
+                console.warn('⚠️ Ты забыл указать свою почту в строке 234!');
             }
         });
-
-        // Подсказка в консоли
-        console.log(`
-        🎮 Сайт приглашения в Доту готов!
-        📧 Уведомления будут приходить на: ${MY_EMAIL}
-        
-        💡 Как это работает:
-        1. Дядя Леон выбирает время
-        2. Нажимает "Подтвердить"
-        3. Тебе приходит письмо на почту!
-        
-        ⚠️ Если письма не приходят:
-        - Проверь папку "Спам"
-        - Убедись, что почта в коде правильная
-        - При первом использовании FormSubmit нужно подтвердить email
-        `);
     </script>
 </body>
 </html>
