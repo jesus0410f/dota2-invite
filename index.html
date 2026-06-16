@@ -55,6 +55,15 @@
             z-index: 1;
         }
 
+        /* Экран 1 */
+        .screen-1 {
+            display: block;
+        }
+
+        .screen-1.hidden {
+            display: none;
+        }
+
         .dota-logo {
             text-align: center;
             font-size: 60px;
@@ -83,41 +92,47 @@
             margin-bottom: 30px;
         }
 
-        .time-slots {
-            display: grid;
-            gap: 15px;
+        .input-group {
             margin: 30px 0;
         }
 
-        .time-slot {
+        .input-label {
+            color: #ffaa88;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            display: block;
+            text-align: center;
+        }
+
+        .time-input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.2em;
             background: rgba(30, 30, 50, 0.8);
             border: 2px solid #ff6432;
             border-radius: 10px;
-            padding: 15px 20px;
             color: white;
-            font-size: 1.1em;
-            cursor: pointer;
+            outline: none;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            text-align: center;
         }
 
-        .time-slot:hover {
-            background: rgba(255, 100, 50, 0.2);
-            transform: translateX(10px);
-            box-shadow: 0 0 30px rgba(255,100,50,0.5);
-        }
-
-        .time-slot.selected {
-            background: rgba(255, 100, 50, 0.4);
+        .time-input:focus {
             border-color: #ffaa88;
-            box-shadow: 0 0 40px rgba(255,100,50,0.7);
-            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(255,100,50,0.5);
+            background: rgba(40, 40, 60, 0.9);
         }
 
-        .time-icon {
-            font-size: 1.5em;
+        .time-input::placeholder {
+            color: rgba(255, 170, 136, 0.5);
+        }
+
+        .examples {
+            color: #ffaa88;
+            font-size: 0.9em;
+            margin-top: 10px;
+            opacity: 0.8;
+            text-align: center;
         }
 
         .confirm-btn {
@@ -147,149 +162,181 @@
             transform: none;
         }
 
-        .message {
-            text-align: center;
-            color: #ffaa88;
-            margin-top: 20px;
-            font-size: 1.1em;
-            min-height: 30px;
-        }
-
-        .success-message {
+        /* Экран 2 */
+        .screen-2 {
             display: none;
-            background: rgba(0, 255, 100, 0.2);
-            border: 2px solid #00ff64;
-            color: #00ff64;
-            padding: 20px;
-            border-radius: 10px;
             text-align: center;
-            font-size: 1.3em;
-            margin-top: 20px;
         }
 
-        .success-message.show {
+        .screen-2.show {
             display: block;
+        }
+
+        .heart-container {
+            font-size: 80px;
+            animation: heartBeat 1.5s ease-in-out infinite;
+            margin: 20px 0;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.3); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
+        }
+
+        .meeting-text {
+            color: white;
+            font-size: 2em;
+            margin: 20px 0;
+            text-shadow: 0 0 20px rgba(255,100,50,0.6);
+        }
+
+        .chosen-time {
+            color: #ffaa88;
+            font-size: 1.3em;
+            margin: 15px 0;
+        }
+
+        .email-sent {
+            color: #00ff64;
+            font-size: 1em;
+            margin-top: 20px;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="content">
-            <div class="dota-logo">⚔️🛡️</div>
-            <h1>Дядя Леон, пора в Доту!</h1>
-            <p class="subtitle">Выбери удобное время для эпического сражения:</p>
-            
-            <div class="time-slots">
-                <div class="time-slot" data-time="Сегодня 19:00">
-                    <span class="time-icon">🌅</span>
-                    <span>Сегодня в 19:00</span>
+            <!-- Экран 1: Приглашение -->
+            <div class="screen-1" id="screen1">
+                <div class="dota-logo">⚔️🛡️</div>
+                <h1>Приглашаю тебя в Доту!</h1>
+                <p class="subtitle">Выбери удобное время:</p>
+                
+                <div class="input-group">
+                    <label class="input-label">🕐 Твоё время:</label>
+                    <input 
+                        type="text" 
+                        class="time-input" 
+                        id="timeInput" 
+                        placeholder="Например: Завтра в 19:00"
+                        autocomplete="off"
+                    >
+                    <div class="examples">
+                        💡 Например: "Сегодня в 20:00", "Завтра после обеда", "В субботу вечером"
+                    </div>
                 </div>
-                <div class="time-slot" data-time="Сегодня 21:00">
-                    <span class="time-icon">🌙</span>
-                    <span>Сегодня в 21:00</span>
-                </div>
-                <div class="time-slot" data-time="Завтра 18:00">
-                    <span class="time-icon">🌟</span>
-                    <span>Завтра в 18:00</span>
-                </div>
-                <div class="time-slot" data-time="Завтра 20:00">
-                    <span class="time-icon">🌌</span>
-                    <span>Завтра в 20:00</span>
-                </div>
-                <div class="time-slot" data-time="Выходные 17:00">
-                    <span class="time-icon">🎯</span>
-                    <span>В выходные в 17:00</span>
-                </div>
+
+                <button class="confirm-btn" id="confirmBtn" disabled>
+                    Подтвердить время
+                </button>
+                
+                <div class="message" id="message"></div>
             </div>
 
-            <button class="confirm-btn" id="confirmBtn" disabled>
-                Подтвердить выбор
-            </button>
-            
-            <div class="message" id="message"></div>
-            <div class="success-message" id="successMessage">
-                🎮 Отлично! Встречаемся в указанное время!<br>
-                <small>Твой племянник уже получил уведомление!</small>
+            <!-- Экран 2: До встречи -->
+            <div class="screen-2" id="screen2">
+                <div class="dota-logo">⚔️🛡️</div>
+                <div class="meeting-text">До встречи!</div>
+                <div class="heart-container">❤️</div>
+                <div class="chosen-time" id="chosenTimeDisplay"></div>
+                <div class="email-sent">
+                    ✅ Уведомление отправлено племяннику!
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Скрытая форма для отправки -->
+    <form id="emailForm" action="https://formsubmit.co/oleg.zanedelev@gmail.com" method="POST" style="display:none;">
+        <input type="hidden" name="_subject" value="🎮 Дядя Леон выбрал время для Доты!">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="text" name="time" id="formTime">
+        <input type="text" name="date" id="formDate">
+        <input type="text" name="message" id="formMessage">
+    </form>
+
+    <iframe name="hiddenFrame" style="display:none;"></iframe>
+
     <script>
-        // ============================================
-        // 🔴 ЗАМЕНИ НА СВОЮ ПОЧТУ (строка 232)
-        // ============================================
         const MY_EMAIL = 'oleg.zanedelev@gmail.com';
         
-        let selectedTime = null;
+        const screen1 = document.getElementById('screen1');
+        const screen2 = document.getElementById('screen2');
+        const timeInput = document.getElementById('timeInput');
+        const confirmBtn = document.getElementById('confirmBtn');
 
-        // Выбор времени
-        document.querySelectorAll('.time-slot').forEach(slot => {
-            slot.addEventListener('click', function() {
-                document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
-                this.classList.add('selected');
-                selectedTime = this.dataset.time;
-                document.getElementById('confirmBtn').disabled = false;
-                document.getElementById('message').textContent = '';
-                document.getElementById('successMessage').classList.remove('show');
-            });
+        // Активируем кнопку когда что-то введено
+        timeInput.addEventListener('input', function() {
+            if (this.value.trim().length > 0) {
+                confirmBtn.disabled = false;
+            } else {
+                confirmBtn.disabled = true;
+            }
         });
 
-        // Отправка при нажатии
-        document.getElementById('confirmBtn').addEventListener('click', async function() {
+        // Отправка по Enter
+        timeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !confirmBtn.disabled) {
+                confirmBtn.click();
+            }
+        });
+
+        // Отправка при нажатии на кнопку
+        confirmBtn.addEventListener('click', function() {
+            const selectedTime = timeInput.value.trim();
+            
             if (!selectedTime) return;
             
-            if (MY_EMAIL === 'ТВОЯ_ПОЧТА@gmail.com') {
-                document.getElementById('message').textContent = '❌ Ошибка: укажи свою почту в коде!';
-                return;
-            }
+            // Заполняем скрытую форму
+            document.getElementById('formTime').value = selectedTime;
+            document.getElementById('formDate').value = new Date().toLocaleString('ru-RU');
+            document.getElementById('formMessage').value = `Дядя Леон выбрал время: "${selectedTime}"`;
             
-            document.getElementById('message').textContent = 'Отправляю...';
-            this.disabled = true;
+            // Показываем выбранное время на втором экране
+            document.getElementById('chosenTimeDisplay').textContent = `🕐 ${selectedTime}`;
             
-            // Отправляем через скрытую форму
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'https://formsubmit.co/' + MY_EMAIL;
-            form.style.display = 'none';
+            // Переключаем экраны
+            screen1.classList.add('hidden');
+            screen2.classList.add('show');
             
-            const fields = {
-                '_subject': '🎮 Дядя Леон выбрал время для Доты!',
-                '_captcha': 'false',
-                'message': `Привет!\n\nДядя Леон выбрал время: ${selectedTime}\n\nДата: ${new Date().toLocaleDateString('ru-RU')}\nВремя: ${new Date().toLocaleTimeString('ru-RU')}\n\nГотовься к битве! ⚔️`
-            };
-            
-            for (const key in fields) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = fields[key];
-                form.appendChild(input);
-            }
-            
-            document.body.appendChild(form);
-            
-            // Показываем успех и отправляем форму
-            document.getElementById('message').textContent = '';
-            document.getElementById('successMessage').classList.add('show');
+            // Сохраняем
             localStorage.setItem('dotaTime', selectedTime);
             localStorage.setItem('dotaTimestamp', new Date().toISOString());
             
+            // Отправляем форму
+            const form = document.getElementById('emailForm');
+            form.target = 'hiddenFrame';
             form.submit();
+            
+            console.log('✅ Письмо отправлено на ' + MY_EMAIL);
+            console.log('📬 Проверь папку "Входящие" и "Спам"');
         });
 
-        // Проверка предыдущего выбора
-        const savedTime = localStorage.getItem('dotaTime');
-        const savedTimestamp = localStorage.getItem('dotaTimestamp');
-        
-        if (savedTime && savedTimestamp) {
-            const timeDiff = Date.now() - new Date(savedTimestamp).getTime();
-            if (timeDiff < 24 * 60 * 60 * 1000) {
-                document.getElementById('successMessage').classList.add('show');
-                document.getElementById('successMessage').innerHTML = 
-                    `🎮 Уже выбрано: ${savedTime}<br><small>До встречи в Доте!</small>`;
-                document.getElementById('confirmBtn').disabled = true;
+        // При загрузке проверяем, не выбирал ли уже время
+        window.addEventListener('load', function() {
+            const savedTime = localStorage.getItem('dotaTime');
+            const savedTimestamp = localStorage.getItem('dotaTimestamp');
+            
+            if (savedTime && savedTimestamp) {
+                const timeDiff = Date.now() - new Date(savedTimestamp).getTime();
+                // Если прошло меньше 24 часов - показываем экран 2
+                if (timeDiff < 24 * 60 * 60 * 1000) {
+                    document.getElementById('chosenTimeDisplay').textContent = `🕐 ${savedTime}`;
+                    screen1.classList.add('hidden');
+                    screen2.classList.add('show');
+                } else {
+                    // Очищаем старые данные
+                    localStorage.removeItem('dotaTime');
+                    localStorage.removeItem('dotaTimestamp');
+                }
             }
-        }
+        });
+
+        console.log('📧 Уведомления уходят на: ' + MY_EMAIL);
     </script>
 </body>
 </html>
