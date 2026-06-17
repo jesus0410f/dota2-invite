@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Битва принята! ⚔️</title>
+    <title>Битва принята, дядя Леон! ⚔️</title>
     <style>
         :root {
             --dota-red: #ff3d00;
@@ -222,7 +222,7 @@
         }
 
         .victory-text {
-            font-size: 2.5em;
+            font-size: 2.2em;
             font-weight: 900;
             margin: 20px 0;
             background: linear-gradient(to right, #ff3d00, #ff6d00, #ffab00);
@@ -321,7 +321,7 @@
         <div class="border-glow"></div>
         <div class="content">
             <div class="swords">⚔️</div>
-            <div class="victory-text">Битва принята!</div>
+            <div class="victory-text">Дядя Леон, до битвы!</div>
             <div class="chosen-time" id="chosenTimeDisplay"></div>
             <div class="email-status" id="emailStatus">
                 ✅ Племянник уже получил сигнал!
@@ -338,7 +338,7 @@
     </div>
 
     <form id="emailForm" action="https://formsubmit.co/oleg.zanedelev@gmail.com" method="POST" style="display:none;">
-        <input type="hidden" name="_subject" value="⚔️ Дядя Лёня выбрал время для Доты!">
+        <input type="hidden" name="_subject" value="⚔️ Дядя Леон выбрал время для Доты!">
         <input type="hidden" name="_captcha" value="false">
         <input type="text" name="time" id="formTime">
         <input type="text" name="date" id="formDate">
@@ -424,9 +424,4 @@
             const emailForm = document.getElementById('emailForm');
 
             if (!timeFromUrl) {
-                chosenTimeDisplay.textContent = '⚡ Время не выбрано';
-                return;
-            }
-
-            const decodedTime = decodeURIComponent(timeFromUrl);
-            chosenTimeDisplay
+                chosenTimeDisplay.textContent = '⚡
